@@ -9,13 +9,13 @@ from app.schemas.message_schemas import Message
 router = APIRouter()
 
 
-
 @router.post("/message", status_code=status.HTTP_201_CREATED)
 async def create_message_(message_data: Message):
     well = await get_well_by_number(message_data.number[:-1])
     if not well:
         return None
 
+    print(message_data.model_dump())
     message_data.water_level = str(
         int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
     )
@@ -37,9 +37,12 @@ async def create_message_(message_data: Message):
             )
         )
     if not well.water_level_start:  # type: ignore
-        message_data.water_level = str(
-            int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
-        )
+        try:
+            message_data.water_level = str(
+                int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
+            )
+        except ValueError:
+            message_data.water_level = "50"
     else:
         message_data.water_level = str(
             random.randint(
