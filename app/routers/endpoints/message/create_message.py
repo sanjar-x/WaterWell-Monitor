@@ -15,10 +15,6 @@ async def create_message_(message_data: Message):
     if not well:
         return None
 
-    print(message_data.model_dump())
-    message_data.water_level = str(
-        int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
-    )
     message_data.number = message_data.number[:-1]
     if not well.salinity_start:  # type: ignore
         message_data.salinity = message_data.salinity[2:-1]
@@ -37,18 +33,17 @@ async def create_message_(message_data: Message):
             )
         )
     if not well.water_level_start:  # type: ignore
-        try:
-            message_data.water_level = str(
-                int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
-            )
-        except ValueError:
-            message_data.water_level = "50"
+        message_data.water_level = str(
+            int(str(well.depth)) - round(float(message_data.water_level[2:-1]))
+        )
+
     else:
         message_data.water_level = str(
             random.randint(
                 int(str(well.water_level_start)), int(str(well.water_level_end))
             )
         )
+
     await create_message(message_data)
     await generate_well_message()
     return JSONResponse(
