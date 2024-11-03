@@ -14,7 +14,6 @@ async def create_message_(message_data: Message):
     well = await get_well_by_number(message_data.number[:-1])
     if not well:
         return None
-
     message_data.number = message_data.number[:-1]
     if not well.salinity_start:  # type: ignore
         message_data.salinity = message_data.salinity[2:-1]
